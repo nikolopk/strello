@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 {% load static %}
-{% load newsfeed_tags %}
+
 <html lang="en">
 <head>
   <title>Personalized News | Rello</title>
@@ -162,20 +162,17 @@
 			</div>
 		</div>
 
-		{% for post in all_articles %}
       <div class="thumbnail">
-	  <h2><i>{{ post.title }}</i></h2>
+	  <h2><i>{{ article.title }}</i></h2>
 	   <table class="table">
 	  <tbody>
       <tr>
 	   <td><img src="{% static 'newsfeed/images/australia.jpg' %}" class="img-rounded"  width="204" height="136"></td>
-	  <td><p>{{ post.text|safe|truncatewords:"100"|linebreaks }}</p>
-        <a href="/newsfeed/{{ post|mongo_id }}">Read more</a>
+	  <td><p>{{ article.text }}</p>
       </td></tr>
 	  </tbody>
 	  </table>
       </div>
-		{% endfor %}
 
 	</div>
     <div class="col-sm-2 sidenav">
@@ -196,8 +193,4 @@
 </body>
 </html>
 
-<!--{% for post in all_articles %}-->
-<!--<h1>{{ post.title }}</h1>-->
-<!--<p>{{ post.text }}<p>-->
-<!--{% endfor %}-->
 

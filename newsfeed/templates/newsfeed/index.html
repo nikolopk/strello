@@ -4,27 +4,32 @@
 
 {%block username %}
 <ul class="nav navbar-nav navbar-right">
-                <li><a href="/newsfeed/profile" id="login-nav"><span class="glyphicon glyphicon-user" style="color:white"></span><font
-                        id="loginSpan" color="white"> {{ user }}</font></a></li>
-            </ul>
+    <li><a href="/newsfeed/profile" id="login-nav"><span class="glyphicon glyphicon-user"
+                                                         style="color:white"></span><font
+            id="loginSpan" color="white"> {{ user }}</font></a></li>
+</ul>
 {% endblock %}
 
 {% block choices %}
 <div class="col-sm-2 sidenav">
-    <table class="table">
-        <tbody>
-        <tr>
-            <td><font style="color:white">World </font></td>
-            <td><input type="range" name="points" min="0" max="10"></td>
-        </tr>
-        <td><font style="color:white">Tech </font></td>
-        <td><input type="range" name="points2" min="0" max="10"></td>
-        </tr>
-        <td><font style="color:white">Sports </font></td>
-        <td><input type="range" name="points3" min="0" max="10"></td>
-        </tr>
-        </tbody>
-    </table>
+    <form action="/newsfeed/prefChange/" method="post">
+        {% csrf_token %}
+        <table class="table">
+            <tbody>
+            <tr>
+                <td><font style="color:white">World </font></td>
+                <td><input type="range" name="worldPoints" min="0" max="2" value="{{ user.worldPref }}"></td>
+            </tr>
+            <td><font style="color:white">Tech </font></td>
+            <td><input type="range" name="techPoints" min="0" max="2" value="{{ user.techPref }}"></td>
+            </tr>
+            <td><font style="color:white">Sports </font></td>
+            <td><input type="range" name="sportsPoints" min="0" max="2" value="{{ user.sportsPref }}"></td>
+            </tr>
+            </tbody>
+        </table>
+        <button type="submit" value="Submit">Save</button>
+    </form>
 </div>
 {% endblock %}
 

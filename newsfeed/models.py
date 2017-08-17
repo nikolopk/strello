@@ -2,8 +2,8 @@
 from __future__ import unicode_literals
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser
-from django.contrib.auth.models import User
 from django.contrib.auth.models import UserManager
+import datetime
 
 
 class Article(models.Model):
@@ -21,6 +21,9 @@ class UserProfile(AbstractBaseUser):
         unique=True,
     )
     worldPref = models.PositiveSmallIntegerField(default=1)
+    techPref = models.PositiveSmallIntegerField(default=1)
+    sportsPref = models.PositiveSmallIntegerField(default=1)
+    date_joined = models.DateTimeField(auto_now_add=True, blank=True)
 
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = ['email']

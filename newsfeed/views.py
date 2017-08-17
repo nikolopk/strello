@@ -1,7 +1,12 @@
 from .models import Article
-from django.contrib.auth.forms import UserCreationForm
 from newsfeed.forms import RegistrationForm
 from django.shortcuts import render, redirect
+from django.contrib.auth import logout
+
+
+def welcome_screen(request):
+    context = {}
+    return render(request, 'newsfeed/welcome_screen.html', context)
 
 
 def index(request):
@@ -30,7 +35,27 @@ def register(request):
         return render(request, 'newsfeed/reg_form.html', args)
 
 
+def logout_view(request):
+    logout(request)
+    return redirect('/newsfeed')
+
+
 def profile(request):
     user = request.user
     context = {'user': user}
     return render(request, 'newsfeed/profile.html', context)
+
+
+def pref_change(request):
+    if request.method == 'POST':
+        worldPoints = request.POST.get('worldPoints')
+        techPoints = request.POST.get('techPoints')
+        sportsPoints = request.POST.get('sportsPoints')
+
+        user = request.user
+        user.worldPref = worldPoints
+        user.techPref = techPoints
+        user.sportsPref = sportsPoints
+        user.save()
+
+    return redirect('/newsfeed')

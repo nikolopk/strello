@@ -7,5 +7,7 @@ urlpatterns = [
     url(r'^register/$', views.register, name='register'),
     url(r'^login/$', login, {'template_name': 'newsfeed/login_form.html'}),
     url(r'^profile/$', views.profile, name='profile'),
+    url(r'^prefChange/$', views.pref_change, name='pref_change'),
+    url(r'^logout/$', views.logout_view, name='logout_view'),
     url(r'^(?P<article_id>[-\w]+)/$', views.single_article, name='single_article'),
 ]

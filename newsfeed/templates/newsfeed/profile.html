@@ -1,0 +1,65 @@
+{% extends 'newsfeed/base.html' %}
+{% load static %}
+
+{%block username %}
+<ul class="nav navbar-nav navbar-right">
+    <li><a href="/newsfeed/profile" id="login-nav"><span class="glyphicon glyphicon-user"
+                                                         style="color:white"></span><font
+            id="loginSpan" color="white"> {{ user }}</font></a></li>
+</ul>
+{% endblock %}
+
+{% block choices %}
+<div class="col-sm-2 sidenav">
+    <table class="table">
+        <tbody>
+        <tr>
+            <td><font style="color:white">World </font></td>
+            <td><input type="range" name="points" min="0" max="2" value="0"></td>
+        </tr>
+        <tr>
+            <td><font style="color:white">Tech </font></td>
+            <td><input type="range" name="points2" min="0" max="2"></td>
+        </tr>
+        <tr>
+            <td><font style="color:white">Sports </font></td>
+            <td><input type="range" name="points3" min="0" max="2"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+{% endblock %}
+{% block body %}
+<div class="thumbnail">
+    <h2><i>Profile</i></h2>
+    <table class="table">
+        <tbody>
+        <tr>
+            <td>Username:</td>
+            <td>{{ user }}</td>
+        </tr>
+        <tr>
+            <td>First Name:</td>
+            <td>{{ user.first_name }}</td>
+        </tr>
+        <tr>
+            <td>Last Name:</td>
+            <td>{{ user.last_name }}</td>
+        </tr>
+        <tr>
+            <td>Email:</td>
+            <td>{{ user.email }}</td>
+        </tr>
+        <tr>
+            <td>Date joined:</td>
+            <td>{{ user.date_joined }}</td>
+        </tr>
+        <tr>
+            <td>Last login:</td>
+            <td>{{ user.last_login }}</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+{% endblock %}
+

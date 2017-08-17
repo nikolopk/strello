@@ -140,3 +140,6 @@ STATICFILES_DIRS = (
     STATIC_PATH,
 )
 
+LOGIN_REDIRECT_URL = '/newsfeed'
+
+AUTH_USER_MODEL = 'newsfeed.UserProfile'

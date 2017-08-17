@@ -1,6 +1,13 @@
 {% extends 'newsfeed/base.html' %}
 {% load static %}
 
+{%block username %}
+<ul class="nav navbar-nav navbar-right">
+                <li><a href="/newsfeed/profile" id="login-nav"><span class="glyphicon glyphicon-user" style="color:white"></span><font
+                        id="loginSpan" color="white"> {{ user }}</font></a></li>
+            </ul>
+{% endblock %}
+
 {% block choices %}
 <div class="col-sm-2 sidenav">
     <table class="table">

@@ -3,14 +3,24 @@
 {% load newsfeed_tags %}
 
 {%block username %}
+{% if user.is_authenticated %}
 <ul class="nav navbar-nav navbar-right">
-    <li><a href="/newsfeed/profile" id="login-nav"><span class="glyphicon glyphicon-user"
-                                                         style="color:white"></span><font
-            id="loginSpan" color="white"> {{ user }}</font></a></li>
+    <li>
+        <a href="/newsfeed/profile" id="login-nav"><span class="glyphicon glyphicon-user" style="color:white"></span>
+            <font id="loginSpan" color="white"> {{ user }}</font>
+        </a>
+    </li>
+    <li>
+        <a href="/newsfeed/logout"><span class="glyphicon glyphicon-log-out" style="color:white"></span>
+            <font  color="white"> Logout</font>
+        </a>
+    </li>
 </ul>
+{% endif %}
 {% endblock %}
 
 {% block choices %}
+{% if user.is_authenticated %}
 <div class="col-sm-2 sidenav">
     <form action="/newsfeed/prefChange/" method="post">
         {% csrf_token %}
@@ -31,9 +41,26 @@
         <button type="submit" value="Submit">Save</button>
     </form>
 </div>
+{% else %}
+<div class="col-sm-2">
+    <table>
+        <tbody>
+        <tr>
+            <td><a href="/newsfeed/register"><img src="{% static 'newsfeed/images/registerButton.png' %}" width="170"
+                                                  height="100"></a></td>
+        </tr>
+        <tr>
+            <td><a href="/newsfeed/login"><img src="{% static 'newsfeed/images/login.png' %}" width="170"
+                                               height="80"></a></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+{% endif %}
 {% endblock %}
 
 {% block body %}
+{% if user.is_authenticated %}
 {% for post in all_articles %}
 <div class="thumbnail">
     <h2><i>{{ post.title }}</i></h2>
@@ -50,5 +77,26 @@
     </table>
 </div>
 {% endfor %}
+{% else %}
+<div class="thumbnail">
+    <h2><i>Welcome to Rello</i></h2>
+    <table class="table">
+        <tbody>
+        <tr>
+            <td><img src="{% static 'newsfeed/images/news-icon-header.png' %}" class="img-rounded" width="204"
+                     height="136"></td>
+            <td><p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
+                industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and
+                scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap
+                into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the
+                release of Letraset sheets containing Lorem Ipsum passages,
+                and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem
+                Ipsum.</p>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+{% endif %}
 {% endblock %}
 

@@ -2,14 +2,12 @@ from .models import Article
 from newsfeed.forms import RegistrationForm
 from django.shortcuts import render, redirect
 from django.contrib.auth import logout
-
-
-def welcome_screen(request):
-    context = {}
-    return render(request, 'newsfeed/welcome_screen.html', context)
+from django.core.cache import cache
+from django.http import HttpResponseRedirect
 
 
 def index(request):
+    cache.clear()
     all_articles = Article.objects.all()
     user = request.user
     context = {'all_articles': all_articles, 'user': user}
@@ -17,10 +15,14 @@ def index(request):
 
 
 def single_article(request, article_id):
-    article = Article.objects.get(id=article_id)
     user = request.user
-    context = {'article': article, 'user': user}
-    return render(request, 'newsfeed/single_article.html', context)
+    if user.is_authenticated():
+        article = Article.objects.get(id=article_id)
+        user = request.user
+        context = {'article': article, 'user': user}
+        return render(request, 'newsfeed/single_article.html', context)
+    else:
+        return HttpResponseRedirect('/newsfeed')
 
 
 def register(request):

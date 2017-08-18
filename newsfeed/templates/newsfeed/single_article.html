@@ -3,9 +3,17 @@
 
 {%block username %}
 <ul class="nav navbar-nav navbar-right">
-                <li><a href="/newsfeed/profile" id="login-nav"><span class="glyphicon glyphicon-user" style="color:white"></span><font
-                        id="loginSpan" color="white"> {{ user }}</font></a></li>
-            </ul>
+    <li>
+        <a href="/newsfeed/profile" id="login-nav"><span class="glyphicon glyphicon-user" style="color:white"></span>
+            <font id="loginSpan" color="white"> {{ user }}</font>
+        </a>
+    </li>
+    <li>
+        <a href="/newsfeed/logout"><span class="glyphicon glyphicon-log-out" style="color:white"></span>
+            <font  color="white"> Logout</font>
+        </a>
+    </li>
+</ul>
 {% endblock %}
 
 {% block choices %}

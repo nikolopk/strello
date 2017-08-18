@@ -11,3 +11,4 @@ urlpatterns = [
     url(r'^logout/$', views.logout_view, name='logout_view'),
     url(r'^(?P<article_id>[-\w]+)/$', views.single_article, name='single_article'),
 ]
+

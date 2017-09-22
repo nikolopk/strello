@@ -12,7 +12,7 @@
     </li>
     <li>
         <a href="/newsfeed/logout"><span class="glyphicon glyphicon-log-out" style="color:white"></span>
-            <font  color="white"> Logout</font>
+            <font color="white"> Logout</font>
         </a>
     </li>
 </ul>
@@ -21,7 +21,7 @@
 
 {% block choices %}
 {% if user.is_authenticated %}
-<div class="col-sm-2 sidenav">
+<div class="col-sm-3 sidenav">
     <form action="/newsfeed/prefChange/" method="post">
         {% csrf_token %}
         <table class="table">
@@ -38,8 +38,27 @@
             </tr>
             </tbody>
         </table>
-        <button type="submit" value="Submit">Save</button>
+        <button type="submit" value="Submit" class="w3-button w3-round-xlarge w3-red">Save</button>
     </form>
+
+    <br><br>
+    <div>
+        <form action="" method="post">
+            {% csrf_token %}
+            <table class="table">
+                <tbody>
+                <tr>
+                    <td style="color:white;">Add RSS</td>
+                </tr>
+                <tr>
+                    <td><input type="text" placeholder="RSS url" name="addRss" style="width:100%;"></td>
+                </tr>
+                </tbody>
+            </table>
+            <button type="submit" value="Submit" class="w3-button w3-round-xlarge w3-red">Save</button>
+        </form>
+        <br>
+    </div>
 </div>
 {% else %}
 <div class="col-sm-2">
@@ -67,7 +86,9 @@
     <table class="table">
         <tbody>
         <tr>
-            <td><img src="{% static 'newsfeed/images/australia.jpg' %}" class="img-rounded" width="204" height="136">
+            <!--<td><img src="{% static 'newsfeed/images/australia.jpg' %}" class="img-rounded" width="204" height="136">-->
+            <!--</td>-->
+            <td><img src="{{ post.thumbnail }}" class="img-rounded" width="204" height="136">
             </td>
             <td><p>{{ post.text|safe|truncatewords:"100"|linebreaks }}</p>
                 <a href="/newsfeed/{{ post|mongo_id }}">Read more</a>

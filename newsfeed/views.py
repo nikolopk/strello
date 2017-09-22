@@ -1,17 +1,38 @@
+#  -*- coding: utf-8 -*-
 from .models import Article
 from newsfeed.forms import RegistrationForm
 from django.shortcuts import render, redirect
 from django.contrib.auth import logout
 from django.core.cache import cache
 from django.http import HttpResponseRedirect
+import feedparser
 
 
 def index(request):
     cache.clear()
-    all_articles = Article.objects.all()
+
+    all_articles = []
+    rss = feedparser.parse('http://feeds.bbci.co.uk/news/rss.xml')
+    for post in rss.entries:
+        print '\n'
+        print 'Title: ' + post.title.encode('utf-8')
+        print post.description.encode('utf-8')
+        print post.link
+        print post.media_thumbnail[0]['url']
+        print '\n'
+        all_articles.append(Article(title = post.title, text = post.description, link = post.link, thumbnail = post.media_thumbnail[0]['url']))
+
+    # all_articles = Article.objects.all()
     user = request.user
     context = {'all_articles': all_articles, 'user': user}
     return render(request, 'newsfeed/index.html', context)
+
+def __str__(self):
+    return self.name.encode('utf8')
+
+
+def prepend_ns(s):
+    return '{http://www.w3.org/2005/Atom}' + s
 
 
 def single_article(request, article_id):

@@ -43,7 +43,7 @@
 
     <br><br>
     <div>
-        <form action="" method="post">
+        <form action="/newsfeed/addRss/" method="post">
             {% csrf_token %}
             <table class="table">
                 <tbody>
@@ -51,7 +51,7 @@
                     <td style="color:white;">Add RSS</td>
                 </tr>
                 <tr>
-                    <td><input type="text" placeholder="RSS url" name="addRss" style="width:100%;"></td>
+                    <td><input type="text" placeholder="RSS url" name="rss" style="width:100%;"></td>
                 </tr>
                 </tbody>
             </table>

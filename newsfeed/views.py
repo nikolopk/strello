@@ -12,23 +12,27 @@ def index(request):
     cache.clear()
 
     all_articles = []
-    rss = feedparser.parse('http://feeds.bbci.co.uk/news/rss.xml')
-    for post in rss.entries:
-        print '\n'
-        print 'Title: ' + post.title.encode('utf-8')
-        print post.description.encode('utf-8')
-        print post.link
-        print post.media_thumbnail[0]['url']
-        print '\n'
-        all_articles.append(Article(title = post.title, text = post.description, link = post.link, thumbnail = post.media_thumbnail[0]['url']))
+
+    user = request.user
+    if user.is_authenticated():
+        rssToProcess = user.rss
+        for rss in rssToProcess:
+            try:
+                rssUrl = feedparser.parse(rss)
+                for post in rssUrl.entries:
+                    # print '\n'
+                    # print 'Title: ' + post.title.encode('utf-8')
+                    # print post.description.encode('utf-8')
+                    # print post.link
+                    # print post.media_thumbnail[0]['url']
+                    # print '\n'
+                    all_articles.append(Article(title = post.title, text = post.description, link = post.link, thumbnail = post.media_thumbnail[0]['url']))
+            except:
+                pass
 
     # all_articles = Article.objects.all()
-    user = request.user
     context = {'all_articles': all_articles, 'user': user}
     return render(request, 'newsfeed/index.html', context)
-
-def __str__(self):
-    return self.name.encode('utf8')
 
 
 def prepend_ns(s):
@@ -79,6 +83,19 @@ def pref_change(request):
         user.worldPref = worldPoints
         user.techPref = techPoints
         user.sportsPref = sportsPoints
+        user.save()
+
+    return redirect('/newsfeed')
+
+
+def add_rss(request):
+    if request.method == 'POST':
+        rssToAdd = request.POST.get('rss')
+
+        user = request.user
+        rssList = user.rss
+        rssList.append(rssToAdd)
+        user.rss = rssList
         user.save()
 
     return redirect('/newsfeed')

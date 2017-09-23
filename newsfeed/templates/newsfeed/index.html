@@ -90,9 +90,11 @@
             <!--</td>-->
             <td><img src="{{ post.thumbnail }}" class="img-rounded" width="204" height="136">
             </td>
-            <td><p>{{ post.text|safe|truncatewords:"100"|linebreaks }}</p>
-                <a href="/newsfeed/{{ post|mongo_id }}">Read more</a>
+            <td><p>{{ post.text }}</p>
             </td>
+            <!--<td><p>{{ post.text|safe|truncatewords:"100"|linebreaks }}</p>-->
+                <!--<a href="/newsfeed/{{ post|mongo_id }}">Read more</a>-->
+            <!--</td>-->
         </tr>
         </tbody>
     </table>

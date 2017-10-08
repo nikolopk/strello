@@ -1,5 +1,5 @@
 #  -*- coding: utf-8 -*-
-from .models import Article
+from newsfeed.models import Article
 from newsfeed.forms import RegistrationForm
 from django.shortcuts import render, redirect
 from django.contrib.auth import logout
@@ -8,32 +8,40 @@ from django.http import HttpResponseRedirect
 import feedparser
 from ContentEngine import ContentEngine
 import csv
+import random
 
 
 def index(request):
     cache.clear()
+    Article.objects.all().delete()
+    user = request.user
 
     all_articles = []
-    fToWrite = open('ttest.csv', "wb")
+    filename = str(user) + '.csv'
+    fToWrite = open(filename, "wb")
+    writer = csv.writer(fToWrite, delimiter=';',
+                        quotechar='"',
+                        quoting=csv.QUOTE_NONE,
+                        escapechar='\\')
+    writer.writerow(['id', 'description'])
     writer = csv.writer(fToWrite, delimiter=';',
                         quotechar='"',
                         quoting=csv.QUOTE_NONNUMERIC,
                         escapechar='\\')
-    writer.writerow(['id', 'title', 'description'])
 
-    user = request.user
     rss = 'http://www2.zougla.gr/articlerss.xml'
     rss2 = 'http://rss.cnn.com/rss/edition_world.rss'
     rss3 = 'http://news247.gr/eidiseis/politiki/?widget=rssfeed&view=feed&contentId=5328'
     rss4 = 'http://feeds.bbci.co.uk/news/rss.xml'
     rss5 = 'http://feeds.reuters.com/reuters/businessNews'
     rss6 = 'http://www.dailymail.co.uk/articles.rss'
-    rssUrl = feedparser.parse(rss4)
+    rss7 = 'https://www.newsinlevels.com/feed/'
+    rssUrl = feedparser.parse(rss3)
 
     postId = 1
     for post in rssUrl.entries:
         _title = post.title
-        _text = post.description
+        _description = post.description
         _link = post.link
         _thumbnail = 'http://ccwc.org/wp-content/themes/ccwc-theme/images/no-image-available.png'
         try:
@@ -45,12 +53,15 @@ def index(request):
             _thumbnail = post.enclosures[0].href
         except:
             pass
-        writer.writerow([postId, _title.encode('utf-8'), _text.encode('utf-8')])
-        postId = postId + 1
-        all_articles.append(Article(title=_title,
-                                    text=_text,
-                                    link=_link,
-                                    thumbnail=_thumbnail))
+        writer.writerow([postId, _description.encode('utf-8')])
+        tempArticle = Article(articleId=postId,
+                              title=_title,
+                              description=_description,
+                              link=_link,
+                              thumbnail=_thumbnail)
+        tempArticle.save()
+        postId += 1
+    fToWrite.close()
 
     # if user.is_authenticated():
     #     rssToProcess = user.rss
@@ -69,9 +80,16 @@ def index(request):
     #             pass
 
     # all_articles = Article.objects.all()
-    # print all_articles
+
     content_engine = ContentEngine()
-    content_engine('ttest2.csv')
+    ds = content_engine(filename)
+    rec_table = content_engine._train(ds)
+    table_to_return = content_engine.predict(1, rec_table)
+
+    all_articles.append(Article.objects.get(articleId=1))
+    for recommended_article in table_to_return:
+        all_articles.append(Article.objects.get(articleId=recommended_article))
+
     context = {'all_articles': all_articles, 'user': user}
     return render(request, 'newsfeed/index.html', context)
 

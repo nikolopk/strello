@@ -7,8 +7,9 @@ from djangotoolbox.fields import ListField
 
 
 class Article(models.Model):
+    articleId = models.IntegerField()
     title = models.CharField(max_length=250)
-    text = models.TextField()
+    description = models.TextField()
     link = models.CharField(max_length=2000)
     thumbnail = models.CharField(max_length=2000)
 

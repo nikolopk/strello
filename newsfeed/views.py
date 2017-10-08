@@ -6,12 +6,20 @@ from django.contrib.auth import logout
 from django.core.cache import cache
 from django.http import HttpResponseRedirect
 import feedparser
+from ContentEngine import ContentEngine
+import csv
 
 
 def index(request):
     cache.clear()
 
     all_articles = []
+    fToWrite = open('ttest.csv', "wb")
+    writer = csv.writer(fToWrite, delimiter=';',
+                        quotechar='"',
+                        quoting=csv.QUOTE_NONNUMERIC,
+                        escapechar='\\')
+    writer.writerow(['id', 'title', 'description'])
 
     user = request.user
     rss = 'http://www2.zougla.gr/articlerss.xml'
@@ -20,8 +28,9 @@ def index(request):
     rss4 = 'http://feeds.bbci.co.uk/news/rss.xml'
     rss5 = 'http://feeds.reuters.com/reuters/businessNews'
     rss6 = 'http://www.dailymail.co.uk/articles.rss'
-    rssUrl = feedparser.parse(rss6)
+    rssUrl = feedparser.parse(rss4)
 
+    postId = 1
     for post in rssUrl.entries:
         _title = post.title
         _text = post.description
@@ -36,10 +45,12 @@ def index(request):
             _thumbnail = post.enclosures[0].href
         except:
             pass
+        writer.writerow([postId, _title.encode('utf-8'), _text.encode('utf-8')])
+        postId = postId + 1
         all_articles.append(Article(title=_title,
                                     text=_text,
                                     link=_link,
-                                    thumbnail = _thumbnail))
+                                    thumbnail=_thumbnail))
 
     # if user.is_authenticated():
     #     rssToProcess = user.rss
@@ -58,6 +69,9 @@ def index(request):
     #             pass
 
     # all_articles = Article.objects.all()
+    # print all_articles
+    content_engine = ContentEngine()
+    content_engine('ttest2.csv')
     context = {'all_articles': all_articles, 'user': user}
     return render(request, 'newsfeed/index.html', context)
 

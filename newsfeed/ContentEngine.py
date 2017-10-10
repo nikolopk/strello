@@ -16,13 +16,20 @@ class ContentEngine(object):
 
     def train(self, data_source):
         ds = []
-        ds = pd.read_table(data_source,
-                               delimiter=';',
-                               quoting=csv.QUOTE_NONE,
-                               encoding='utf-8',
-                               quotechar='"',
-                               escapechar='\\'
-                               )
+        ds = pd.read_csv(data_source,
+                         delimiter=';',
+                         quoting=csv.QUOTE_NONE,
+                         encoding='utf-8',
+                         quotechar='"',
+                         escapechar='\\',
+                         error_bad_lines=False)
+        # ds = pd.read_table(data_source,
+        #                        delimiter=';',
+        #                        quoting=csv.QUOTE_NONE,
+        #                        encoding='utf-8',
+        #                        quotechar='"',
+        #                        escapechar='\\',
+        #                        )
         print str(ds)
         # new_docs = ['He watches basketball and baseball', 'Julie likes to play basketball', 'Jane loves to play baseball']
         return ds
@@ -32,8 +39,8 @@ class ContentEngine(object):
                              ngram_range=(1, 3),
                              min_df=0,
                              stop_words='english')
-        tfidf_matrix = tf.fit_transform(ds['description'].values.astype('U'))
-        cosine_similarities = linear_kernel(tfidf_matrix)
+        tfidf_matrix = tf.fit_transform(ds['title'].values.astype('U'))
+        cosine_similarities = linear_kernel(tfidf_matrix, tfidf_matrix)
 
         rec_table = []
         for idx, row in ds.iterrows():

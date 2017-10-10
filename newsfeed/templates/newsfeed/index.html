@@ -28,37 +28,55 @@
             <tbody>
             <tr>
                 <td><font style="color:white">World </font></td>
-                <td><input type="range" name="worldPoints" min="0" max="2" value="{{ user.worldPref }}"></td>
+                <td><input type="range" name="worldPoints" min="0" max="4" value="{{ user.worldPref }}"></td>
             </tr>
-            <td><font style="color:white">Tech </font></td>
-            <td><input type="range" name="techPoints" min="0" max="2" value="{{ user.techPref }}"></td>
+            <tr>
+                <td><font style="color:white">Business </font></td>
+                <td><input type="range" name="businessPoints" min="0" max="4" value="{{ user.businessPref }}"></td>
             </tr>
-            <td><font style="color:white">Sports </font></td>
-            <td><input type="range" name="sportsPoints" min="0" max="2" value="{{ user.sportsPref }}"></td>
+            <tr>
+                <td><font style="color:white">Technology </font></td>
+                <td><input type="range" name="technologyPoints" min="0" max="4" value="{{ user.technologyPref }}"></td>
+            </tr>
+            <tr>
+                <td><font style="color:white">Science </font></td>
+                <td><input type="range" name="sciencePoints" min="0" max="4" value="{{ user.sciencePref }}"></td>
+            </tr>
+            <tr>
+                <td><font style="color:white">Health </font></td>
+                <td><input type="range" name="healthPoints" min="0" max="4" value="{{ user.healthPref }}"></td>
+            </tr>
+            <tr>
+                <td><font style="color:white">Sports </font></td>
+                <td><input type="range" name="sportsPoints" min="0" max="4" value="{{ user.sportsPref }}"></td>
+            </tr>
+            <tr>
+                <td><font style="color:white">Politics </font></td>
+                <td><input type="range" name="politicsPoints" min="0" max="4" value="{{ user.politicsPref }}"></td>
             </tr>
             </tbody>
         </table>
         <button type="submit" value="Submit" class="w3-button w3-round-xlarge w3-red">Save</button>
     </form>
 
-    <br><br>
-    <div>
-        <form action="/newsfeed/addRss/" method="post">
-            {% csrf_token %}
-            <table class="table">
-                <tbody>
-                <tr>
-                    <td style="color:white;">Add RSS</td>
-                </tr>
-                <tr>
-                    <td><input type="text" placeholder="RSS url" name="rss" style="width:100%;"></td>
-                </tr>
-                </tbody>
-            </table>
-            <button type="submit" value="Submit" class="w3-button w3-round-xlarge w3-red">Save</button>
-        </form>
-        <br>
-    </div>
+    <!--<br><br>-->
+    <!--<div>-->
+    <!--<form action="/newsfeed/addRss/" method="post">-->
+    <!--{% csrf_token %}-->
+    <!--<table class="table">-->
+    <!--<tbody>-->
+    <!--<tr>-->
+    <!--<td style="color:white;">Add RSS</td>-->
+    <!--</tr>-->
+    <!--<tr>-->
+    <!--<td><input type="text" placeholder="RSS url" name="rss" style="width:100%;"></td>-->
+    <!--</tr>-->
+    <!--</tbody>-->
+    <!--</table>-->
+    <!--<button type="submit" value="Submit" class="w3-button w3-round-xlarge w3-red">Save</button>-->
+    <!--</form>-->
+    <!--<br>-->
+    <!--</div>-->
 </div>
 {% else %}
 <div class="col-sm-2">
@@ -94,7 +112,7 @@
                 <a target="_blank" href="{{ post.link }}">Read more</a>
             </td>
             <!--<td><p>{{ post.text|safe|truncatewords:"100"|linebreaks }}</p>-->
-                <!--<a href="/newsfeed/{{ post|mongo_id }}">Read more</a>-->
+            <!--<a href="/newsfeed/{{ post|mongo_id }}">Read more</a>-->
             <!--</td>-->
         </tr>
         </tbody>
@@ -109,13 +127,20 @@
         <tr>
             <td><img src="{% static 'newsfeed/images/news-icon-header.png' %}" class="img-rounded" width="204"
                      height="136"></td>
-            <td><p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
-                industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and
-                scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap
-                into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the
-                release of Letraset sheets containing Lorem Ipsum passages,
-                and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem
-                Ipsum.</p>
+            <td>
+                <!--<p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the&ndash;&gt;-->
+                <!--industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and-->
+                <!--scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap-->
+                <!--into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the-->
+                <!--release of Letraset sheets containing Lorem Ipsum passages,-->
+                <!--and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem-->
+                <!--Ipsum.</p>-->
+                <p>The system, called Rello, collects articles from preselected websites, such as news websites or
+                    sports websites and then,
+                    an analysis is made in the text of each article. As a result, the appropriate information is
+                    extracted
+                    (eg title, text, date, author, keywords), so as the user to be informed about news similar to its
+                    interests.</p>
             </td>
         </tr>
         </tbody>

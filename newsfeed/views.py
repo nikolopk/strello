@@ -23,7 +23,7 @@ def index(request):
                         quotechar='"',
                         quoting=csv.QUOTE_NONE,
                         escapechar='\\')
-    writer.writerow(['id', 'description'])
+    writer.writerow(['id', 'title', 'description'])
     writer = csv.writer(fToWrite, delimiter=';',
                         quotechar='"',
                         quoting=csv.QUOTE_NONNUMERIC,
@@ -36,7 +36,7 @@ def index(request):
     rss5 = 'http://feeds.reuters.com/reuters/businessNews'
     rss6 = 'http://www.dailymail.co.uk/articles.rss'
     rss7 = 'https://www.newsinlevels.com/feed/'
-    rssUrl = feedparser.parse(rss3)
+    rssUrl = feedparser.parse(rss6)
 
     postId = 1
     for post in rssUrl.entries:
@@ -53,7 +53,7 @@ def index(request):
             _thumbnail = post.enclosures[0].href
         except:
             pass
-        writer.writerow([postId, _description.encode('utf-8')])
+        writer.writerow([postId, _title.encode('utf-8'), _description.encode('utf-8')])
         tempArticle = Article(articleId=postId,
                               title=_title,
                               description=_description,
@@ -84,9 +84,9 @@ def index(request):
     content_engine = ContentEngine()
     ds = content_engine(filename)
     rec_table = content_engine._train(ds)
-    table_to_return = content_engine.predict(1, rec_table)
+    table_to_return = content_engine.predict(6, rec_table)
 
-    all_articles.append(Article.objects.get(articleId=1))
+    all_articles.append(Article.objects.get(articleId=6))
     for recommended_article in table_to_return:
         all_articles.append(Article.objects.get(articleId=recommended_article))
 

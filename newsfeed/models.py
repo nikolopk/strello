@@ -23,10 +23,14 @@ class UserProfile(AbstractBaseUser):
         max_length=255,
         unique=True,
     )
-    worldPref = models.PositiveSmallIntegerField(default=1)
-    techPref = models.PositiveSmallIntegerField(default=1)
-    sportsPref = models.PositiveSmallIntegerField(default=1)
-    rss = ListField(models.CharField(max_length=2000), default=[])
+    worldPref = models.PositiveSmallIntegerField(default=2)
+    businessPref = models.PositiveSmallIntegerField(default=2)
+    technologyPref = models.PositiveSmallIntegerField(default=2)
+    sciencePref = models.PositiveSmallIntegerField(default=2)
+    healthPref = models.PositiveSmallIntegerField(default=2)
+    sportsPref = models.PositiveSmallIntegerField(default=2)
+    politicsPref = models.PositiveSmallIntegerField(default=2)
+    # rss = ListField(models.CharField(max_length=2000), default=[])
     date_joined = models.DateTimeField(auto_now_add=True, blank=True)
 
     USERNAME_FIELD = 'username'

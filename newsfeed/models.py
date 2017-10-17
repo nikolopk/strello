@@ -14,6 +14,12 @@ class Article(models.Model):
     thumbnail = models.CharField(max_length=2000)
 
 
+class RateArticle(models.Model):
+    articleId = models.IntegerField()
+    userId = models.CharField(max_length=100)
+    rating = models.IntegerField()
+
+
 class UserProfile(AbstractBaseUser):
     username = models.CharField(max_length=150, unique=True)
     first_name = models.CharField(max_length=150)
@@ -30,6 +36,7 @@ class UserProfile(AbstractBaseUser):
     healthPref = models.PositiveSmallIntegerField(default=2)
     sportsPref = models.PositiveSmallIntegerField(default=2)
     politicsPref = models.PositiveSmallIntegerField(default=2)
+    cfEnabled = models.BooleanField(default=False)
     # rss = ListField(models.CharField(max_length=2000), default=[])
     date_joined = models.DateTimeField(auto_now_add=True, blank=True)
 

@@ -30,7 +30,7 @@ class ContentEngine(object):
         #                        quotechar='"',
         #                        escapechar='\\',
         #                        )
-        print str(ds)
+        # print str(ds)
         # new_docs = ['He watches basketball and baseball', 'Julie likes to play basketball', 'Jane loves to play baseball']
         return ds
 
@@ -40,6 +40,7 @@ class ContentEngine(object):
                              min_df=0,
                              stop_words='english')
         tfidf_matrix = tf.fit_transform(ds['title'].values.astype('U'))
+        # tfidf_matrix = tf.fit_transform(ds['title'])
         cosine_similarities = linear_kernel(tfidf_matrix, tfidf_matrix)
 
         rec_table = []
@@ -58,7 +59,7 @@ class ContentEngine(object):
         prev_zero = False
         for element in rec_table[item_id]:
 
-            print element
+            # print element
             element = float(element)
             if (element % 1 == 0) and (element != 0) and (not prev_zero):
                 table_to_return.append(element)
@@ -66,5 +67,5 @@ class ContentEngine(object):
                 prev_zero = True
             else:
                 prev_zero = False
-        print str(table_to_return)
+        # print str(table_to_return)
         return table_to_return

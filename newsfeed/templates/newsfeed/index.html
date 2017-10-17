@@ -59,6 +59,14 @@
         <button type="submit" value="Submit" class="w3-button w3-round-xlarge w3-red">Save</button>
     </form>
 
+    <br>
+    <!--<div>-->
+    <!--<form action="" method="post">-->
+    <!--{% csrf_token %}-->
+    <!--<button type="submit" value="Submit" class="w3-button w3-round-xxlarge w3-green">Rate Articles</button>-->
+    <!--</form>-->
+    <!--<br>-->
+    <!--</div>-->
     <!--<br><br>-->
     <!--<div>-->
     <!--<form action="/newsfeed/addRss/" method="post">-->
@@ -98,22 +106,79 @@
 
 {% block body %}
 {% if user.is_authenticated %}
+<script>
+$(document).ready( function() {
+
+    function getCookie(name) {
+        var cookieValue = null;
+        var i = 0;
+        if (document.cookie && document.cookie !== '') {
+            var cookies = document.cookie.split(';');
+            for (i; i < cookies.length; i++) {
+                var cookie = jQuery.trim(cookies[i]);
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    function csrfSafeMethod(method) {
+        // these HTTP methods do not require CSRF protection
+        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+
+    $(document).on('click','#rateButton',function(){
+
+        var articleId = $(this).attr('name');
+        var value = $("#"+articleId).val();
+        csrfToken = getCookie('csrftoken')
+
+        $.ajax({
+            url: "/newsfeed/saveRatings/",
+            type: "post",
+            data: {'id': articleId, 'value': value},
+            beforeSend: function(xhr, settings) {
+                if (!csrfSafeMethod(settings.type)) {
+                    xhr.setRequestHeader("X-CSRFToken", csrfToken);
+                }
+            },
+            success: function(data) {
+
+            }
+        })
+    });
+});
+
+
+
+</script>
 {% for post in all_articles %}
+<input type="text" name="articleIdInput" value="{{ post.articleId }}" style="display:none;">
 <div class="thumbnail">
-    <h2><i>{{ post.title }}</i></h2>
+    <h2><i><a target="_blank" href="{{ post.link }}">{{ post.title }}</a></i></h2>
     <table class="table">
         <tbody>
         <tr>
             <!--<td><img src="{% static 'newsfeed/images/australia.jpg' %}" class="img-rounded" width="204" height="136">-->
             <!--</td>-->
-            <td><img src="{{ post.thumbnail }}" class="img-rounded" width="204" height="136">
-            </td>
+            <td><img src="{{ post.thumbnail }}" class="img-rounded" width="204" height="136"></td>
             <td><p>{{ post.description }}</p>
-                <a target="_blank" href="{{ post.link }}">Read more</a>
+                <p style="color:red;">Rate the article</p>
+                <input type="range" id="{{ post.articleId }}" min="0" max="2" value="1">
+
             </td>
             <!--<td><p>{{ post.text|safe|truncatewords:"100"|linebreaks }}</p>-->
             <!--<a href="/newsfeed/{{ post|mongo_id }}">Read more</a>-->
-            <!--</td>-->
+        </tr>
+        <tr>
+            <td>
+                <!--<a target="_blank" href="{{ post.link }}">Read more</a>-->
+                <button class="w3-button w3-round-xxlarge w3-green" name="{{ post.articleId }}" id="rateButton">Rate</button>
+            </td>
         </tr>
         </tbody>
     </table>
@@ -121,21 +186,14 @@
 {% endfor %}
 {% else %}
 <div class="thumbnail">
-    <h2><i>Welcome to Rello</i></h2>
+    <h2><i>Welcome to StRello</i></h2>
     <table class="table">
         <tbody>
         <tr>
             <td><img src="{% static 'newsfeed/images/news-icon-header.png' %}" class="img-rounded" width="204"
                      height="136"></td>
             <td>
-                <!--<p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the&ndash;&gt;-->
-                <!--industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and-->
-                <!--scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap-->
-                <!--into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the-->
-                <!--release of Letraset sheets containing Lorem Ipsum passages,-->
-                <!--and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem-->
-                <!--Ipsum.</p>-->
-                <p>The system, called Rello, collects articles from preselected websites, such as news websites or
+                <p>The system, called StRello, collects articles from preselected websites, such as news websites or
                     sports websites and then,
                     an analysis is made in the text of each article. As a result, the appropriate information is
                     extracted
@@ -148,4 +206,16 @@
 </div>
 {% endif %}
 {% endblock %}
+
+<!--{% block ratingButton %}-->
+<!--{% if user.is_authenticated %}-->
+<!--<div>-->
+    <!--<form action="/newsfeed/saveRatings/" method="post">-->
+        <!--{% csrf_token %}-->
+        <!--<button type="submit" value="Submit" class="w3-button w3-round-xxlarge w3-green">Rate Articles</button>-->
+    <!--</form>-->
+    <!--<br>-->
+<!--</div>-->
+<!--{% endif %}-->
+<!--{% endblock %}-->
 

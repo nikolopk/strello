@@ -32,7 +32,7 @@
             <tr>
                 <td><a href="/newsfeed"><img src="{% static 'newsfeed/images/news-icon-header.png' %}" class="img-responsive" width="52"
                                      height="10"></a></td>
-                <td><a href="/newsfeed"><h3><font color="white"><b>sTRello</b></font></h3></a></td>
+                <td><a href="/newsfeed"><h3><font color="white"><b>StRello</b></font></h3></a></td>
             </tr><!--class="navbar-brand"-->
             </tbody>
             </table>
@@ -147,12 +147,14 @@
             {% endblock %}
         </div>
         <div class="col-sm-2 sidenav">
+            <!--{% block ratingButton %}-->
+            <!--{% endblock %}-->
             <div class="well">
-                <a href="http://aigroup.ceid.upatras.gr"><img src="{% static 'newsfeed/images/aig_logo.png' %}"
+                <a target="_blank" href="http://aigroup.ceid.upatras.gr"><img src="{% static 'newsfeed/images/aig_logo.png' %}"
                                                               class="img-responsive" alt="aig logo"></a>
             </div>
             <div class="well">
-                <a href="https://www.upatras.gr"><img src="{% static 'newsfeed/images/University_of_Patras.png' %}"
+                <a target="_blank" href="https://www.upatras.gr"><img src="{% static 'newsfeed/images/University_of_Patras.png' %}"
                                                       class="img-responsive" alt="aig logo"></a>
             </div>
         </div>
@@ -160,7 +162,7 @@
 </div>
 
 <footer class="container-fluid text-center" id="myFooter">
-    <p><a href="http://aigroup.ceid.upatras.gr">AI Group</a> Ceid@2017</p>
+    <p><a target="_blank" href="http://aigroup.ceid.upatras.gr">AI Group</a> - <a target="_blank" href="https://www.linkedin.com/in/nikolo/">Konstantinos Nikolopoulos</a> Ceid@2017</p>
 </footer>
 
 </body>

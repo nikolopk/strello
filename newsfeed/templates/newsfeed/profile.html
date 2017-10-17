@@ -2,34 +2,65 @@
 {% load static %}
 
 {%block username %}
+{% if user.is_authenticated %}
 <ul class="nav navbar-nav navbar-right">
-    <li><a href="/newsfeed/profile" id="login-nav"><span class="glyphicon glyphicon-user"
-                                                         style="color:white"></span><font
-            id="loginSpan" color="white"> {{ user }}</font></a></li>
+    <li>
+        <a href="/newsfeed/profile" id="login-nav"><span class="glyphicon glyphicon-user" style="color:white"></span>
+            <font id="loginSpan" color="white"> {{ user }}</font>
+        </a>
+    </li>
+    <li>
+        <a href="/newsfeed/logout"><span class="glyphicon glyphicon-log-out" style="color:white"></span>
+            <font color="white"> Logout</font>
+        </a>
+    </li>
 </ul>
+{% endif %}
 {% endblock %}
 
 {% block choices %}
-<div class="col-sm-2 sidenav">
+{% if user.is_authenticated %}
+<div class="col-sm-3 sidenav">
     <form action="/newsfeed/prefChange/" method="post">
         {% csrf_token %}
         <table class="table">
             <tbody>
             <tr>
                 <td><font style="color:white">World </font></td>
-                <td><input type="range" name="worldPoints" min="0" max="2" value="{{ user.worldPref }}"></td>
+                <td><input type="range" name="worldPoints" min="0" max="4" value="{{ user.worldPref }}"></td>
             </tr>
-            <td><font style="color:white">Tech </font></td>
-            <td><input type="range" name="techPoints" min="0" max="2" value="{{ user.techPref }}"></td>
+            <tr>
+                <td><font style="color:white">Business </font></td>
+                <td><input type="range" name="businessPoints" min="0" max="4" value="{{ user.businessPref }}"></td>
             </tr>
-            <td><font style="color:white">Sports </font></td>
-            <td><input type="range" name="sportsPoints" min="0" max="2" value="{{ user.sportsPref }}"></td>
+            <tr>
+                <td><font style="color:white">Technology </font></td>
+                <td><input type="range" name="technologyPoints" min="0" max="4" value="{{ user.technologyPref }}"></td>
+            </tr>
+            <tr>
+                <td><font style="color:white">Science </font></td>
+                <td><input type="range" name="sciencePoints" min="0" max="4" value="{{ user.sciencePref }}"></td>
+            </tr>
+            <tr>
+                <td><font style="color:white">Health </font></td>
+                <td><input type="range" name="healthPoints" min="0" max="4" value="{{ user.healthPref }}"></td>
+            </tr>
+            <tr>
+                <td><font style="color:white">Sports </font></td>
+                <td><input type="range" name="sportsPoints" min="0" max="4" value="{{ user.sportsPref }}"></td>
+            </tr>
+            <tr>
+                <td><font style="color:white">Politics </font></td>
+                <td><input type="range" name="politicsPoints" min="0" max="4" value="{{ user.politicsPref }}"></td>
             </tr>
             </tbody>
         </table>
-        <button type="submit" value="Submit">Save</button>
+        <button type="submit" value="Submit" class="w3-button w3-round-xlarge w3-red">Save</button>
     </form>
+
+    <br>
 </div>
+{% endif %}
 {% endblock %}
 
 {% block body %}
@@ -65,24 +96,24 @@
     </table>
 </div>
 
-<div class="thumbnail">
-    <h2><i>Rss in database</i></h2>
-    <table class="table">
-        <tbody>
-        <tr>
-            <td>BBC</td>
-            <td>http://feeds.bbci.co.uk/news/rss.xml</td>
-        </tr>
-        <tr>
-            <td>BBC</td>
-            <td>http://feeds.bbci.co.uk/news/rss.xml</td>
-        </tr>
-        <tr>
-            <td>BBC</td>
-            <td>http://feeds.bbci.co.uk/news/rss.xml</td>
-        </tr>
-        </tbody>
-    </table>
-</div>
+<!--<div class="thumbnail">-->
+    <!--<h2><i>Rss in database</i></h2>-->
+    <!--<table class="table">-->
+        <!--<tbody>-->
+        <!--<tr>-->
+            <!--<td>BBC</td>-->
+            <!--<td>http://feeds.bbci.co.uk/news/rss.xml</td>-->
+        <!--</tr>-->
+        <!--<tr>-->
+            <!--<td>BBC</td>-->
+            <!--<td>http://feeds.bbci.co.uk/news/rss.xml</td>-->
+        <!--</tr>-->
+        <!--<tr>-->
+            <!--<td>BBC</td>-->
+            <!--<td>http://feeds.bbci.co.uk/news/rss.xml</td>-->
+        <!--</tr>-->
+        <!--</tbody>-->
+    <!--</table>-->
+<!--</div>-->
 {% endblock %}
 

@@ -1,6 +1,7 @@
 from django import forms
 from newsfeed.models import UserProfile
 from django.contrib.auth.forms import UserCreationForm
+from djangotoolbox.fields import ListField
 
 
 class RegistrationForm(UserCreationForm):
@@ -32,3 +33,7 @@ class RegistrationForm(UserCreationForm):
             user.save()
 
         return user
+
+
+# class idsForm(forms.Form):
+#     ids = forms.ListField(forms.CharField(max_length=2000), default=[])

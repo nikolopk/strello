@@ -9,7 +9,6 @@ def info(msg):
 
 
 class ContentEngine(object):
-
     def __call__(self, data_source):
         ds = self.train(data_source)
         return ds
@@ -54,18 +53,25 @@ class ContentEngine(object):
         return rec_table
 
     def predict(self, item_id, rec_table):
-        # print str(rec_table[item_id])
-        table_to_return = []
-        prev_zero = False
-        for element in rec_table[item_id]:
+        try:
+            table_to_return = []
+            prev_zero = False
 
-            # print element
-            element = float(element)
-            if (element % 1 == 0) and (element != 0) and (not prev_zero):
-                table_to_return.append(element)
-            if element == 0:
-                prev_zero = True
-            else:
-                prev_zero = False
+            for element in rec_table[item_id]:
+
+                # print element
+                element = float(element)
+                if (element % 1 == 0) and (element != 0) and (not prev_zero):
+                    table_to_return.append(element)
+                if element == 0.0:
+                    prev_zero = True
+                else:
+                  prev_zero = False
+
+        except Exception as ex:
+            print ex
+            table_to_return = []
+            pass
+
         # print str(table_to_return)
         return table_to_return

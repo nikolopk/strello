@@ -90,7 +90,7 @@ WSGI_APPLICATION = 'rello.wsgi.application'
 DATABASES = {
    'default': {
       'ENGINE': 'django_mongodb_engine',
-      'NAME': 'rello_db'
+      'NAME': 'strello_db'
    }
 }
 

@@ -12,7 +12,7 @@ class Article(models.Model):
     description = models.TextField()
     link = models.CharField(max_length=2000)
     thumbnail = models.CharField(max_length=2000)
-    date = models.DateTimeField(blank=True)
+    timestamp = models.DateTimeField()
 
 
 class RateArticle(models.Model):

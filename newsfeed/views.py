@@ -15,6 +15,9 @@ from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm
 from django.db.models import Q
 from random import randint
+import time
+import datetime
+import os
 
 
 def index(request):
@@ -27,7 +30,9 @@ def index(request):
 
     try:
         if user.is_authenticated():
-            dbArticles = Article.objects.all()
+            today = datetime.datetime.utcnow()
+            fixed_date = datetime.datetime.strptime(str(today), '%Y-%m-%d %H:%M:%S.%f') - datetime.timedelta(days=2)
+            dbArticles = Article.objects.filter(timestamp__gte=fixed_date)
 
             filename = str(user) + '.csv'
             fToWrite = open(filename, "wb")
@@ -59,6 +64,7 @@ def index(request):
                 user_mongo_ids = nikolo_engine()
                 similar_vector = nikolo_engine.train(user_mongo_ids)
                 wantedIds = nikolo_engine.predict(similar_vector, user_mongo_ids, user_mongo_ids.index(user.id))
+                # print wantedIds
 
             content_engine = ContentEngine()
             ds = content_engine(filename)
@@ -73,7 +79,9 @@ def index(request):
             unique_articles_ids = list(set(all_articles_ids))
             for row in unique_articles_ids:
                 all_articles.append(Article.objects.get(articleId=row))
-    except:
+            os.remove(filename)
+    except Exception as ex:
+        print ex
         pass
     context = {'all_articles': all_articles, 'user': user}
     return render(request, 'newsfeed/index.html', context)
@@ -140,7 +148,12 @@ def pref_change(request):
         user.healthPref = healthPoints
         user.sportsPref = sportsPoints
         user.politicsPref = politicsPoints
-        user.cfEnabled = True
+
+        user_objects = RateArticle.objects.filter(userId=user.id, rating__gte=1)
+        if len(user_objects) > 5:
+            user.cfEnabled = True
+        else:
+            user.cfEnabled = False
         user.save()
 
     return redirect('/newsfeed')

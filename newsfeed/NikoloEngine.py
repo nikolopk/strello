@@ -1,6 +1,7 @@
-from newsfeed.models import UserProfile, RateArticle
+from newsfeed.models import UserProfile, RateArticle, Article
 from sklearn.metrics.pairwise import cosine_similarity
 import numpy as np
+import datetime
 
 
 class NikoloEngine(object):
@@ -68,8 +69,10 @@ class NikoloEngine(object):
         return similar_vector
 
     def predict(self, similar_vector, user_mongo_ids, user_index):
+        # print similar_vector
         user_a_mongo_id = user_mongo_ids[user_index]
         user_a_objects = RateArticle.objects.filter(userId=user_a_mongo_id)
+        # print user_a_objects
         user_a_aricles = []
         for row in user_a_objects:
             user_a_aricles.append(row.articleId)
@@ -82,9 +85,16 @@ class NikoloEngine(object):
             user_b_aricles.append(row.articleId)
         # print user_b_aricles
 
+        today = datetime.datetime.utcnow()
+        fixed_date = datetime.datetime.strptime(str(today), '%Y-%m-%d %H:%M:%S.%f') - datetime.timedelta(days=2)
+        dbArticles = Article.objects.filter(timestamp__gte=fixed_date)
+        valid_articles = []
+        for row in dbArticles:
+            valid_articles.append(row.articleId)
+
         recommendation_articles = []
         for i in user_b_aricles:
-            if i not in user_a_aricles:
+            if (i not in user_a_aricles) and (i in valid_articles):
                 recommendation_articles.append(i)
         # print recommendation_articles
         return recommendation_articles

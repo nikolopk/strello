@@ -1,20 +1,24 @@
-from newsfeed.models import UserProfile, RateArticle, Article
-from sklearn.metrics.pairwise import cosine_similarity
+#  -*- coding: utf-8 -*-
+""" Class for Nikolo filtering """
 import numpy as np
 import datetime
+from sklearn.metrics.pairwise import cosine_similarity
+from newsfeed.models import UserProfile, RateArticle, Article
 
 
 class NikoloEngine(object):
     def __call__(self):
+        """ Constructor """
         user_mongo_ids = self.user_vectorize()
         return user_mongo_ids
 
     def user_vectorize(self):
+        """ Build users preferences vectors """
         user_mongo_ids = []
         try:
-            dbUsers = UserProfile.objects.all()
-            for row_user in dbUsers:
-                if not row_user.cfEnabled:
+            db_users = UserProfile.objects.all()
+            for row_user in db_users:
+                if (not row_user.ratingsEnabled) or (not row_user.preferencesEnabled):
                     continue
                 user_mongo_ids.append(row_user.id)
         except:

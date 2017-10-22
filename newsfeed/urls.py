@@ -9,8 +9,6 @@ urlpatterns = [
     url(r'^profile/$', views.profile, name='profile'),
     url(r'^prefChange/$', views.pref_change, name='pref_change'),
     url(r'^saveRatings/$', views.save_ratings, name='save_ratings'),
-    # url(r'^addRss/$', views.add_rss, name='add_rss'),
     url(r'^logout/$', views.logout_view, name='logout_view'),
-    url(r'^(?P<article_id>[-\w]+)/$', views.single_article, name='single_article'),
 ]
 

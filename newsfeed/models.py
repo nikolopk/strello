@@ -1,12 +1,15 @@
 # -*- coding: utf-8 -*-
+"""
+    Models for database scheme.
+"""
 from __future__ import unicode_literals
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser
 from django.contrib.auth.models import UserManager
-from djangotoolbox.fields import ListField
 
 
 class Article(models.Model):
+    """ Model for each article. """
     articleId = models.IntegerField()
     title = models.CharField(max_length=250)
     description = models.TextField()
@@ -16,12 +19,14 @@ class Article(models.Model):
 
 
 class RateArticle(models.Model):
+    """ Stores rates of users for articles. """
     articleId = models.IntegerField()
     userId = models.CharField(max_length=100)
     rating = models.IntegerField()
 
 
 class UserProfile(AbstractBaseUser):
+    """ Stores users info """
     username = models.CharField(max_length=150, unique=True)
     first_name = models.CharField(max_length=150)
     last_name = models.CharField(max_length=150)
@@ -37,8 +42,9 @@ class UserProfile(AbstractBaseUser):
     healthPref = models.PositiveSmallIntegerField(default=2)
     sportsPref = models.PositiveSmallIntegerField(default=2)
     politicsPref = models.PositiveSmallIntegerField(default=2)
-    cfEnabled = models.BooleanField(default=False)
-    # rss = ListField(models.CharField(max_length=2000), default=[])
+    preferencesEnabled = models.BooleanField(default=False)
+    ratingsEnabled = models.BooleanField(default=False)
+    # nikoloEnabled = models.BooleanField(default=False)
     date_joined = models.DateTimeField(auto_now_add=True, blank=True)
 
     USERNAME_FIELD = 'username'

@@ -1,78 +1,81 @@
 #  -*- coding: utf-8 -*-
+""" View file """
+import csv
+import datetime
+import os
+from random import randint
+from django.shortcuts import render, redirect
+from django.contrib.auth import logout
+from django.core.cache import cache
+from django.contrib.auth import login, authenticate
 from newsfeed.models import Article
 from newsfeed.models import RateArticle
 from newsfeed.forms import RegistrationForm
-from django.shortcuts import render, redirect, render_to_response
-from django.contrib.auth import logout
-from django.core.cache import cache
-from django.http import HttpResponseRedirect
-import feedparser
-from ContentEngine import ContentEngine
-from NikoloEngine import NikoloEngine
-import csv
-from django.contrib import messages
-from django.contrib.auth import login, authenticate
-from django.contrib.auth.forms import UserCreationForm
-from django.db.models import Q
-from random import randint
-import time
-import datetime
-import os
+from newsfeed.ContentEngine import ContentEngine
+from newsfeed.NikoloEngine import NikoloEngine
 
 
 def index(request):
+    """ Initial method, responsible for serving to users articles"""
     cache.clear()
-    # latestArticleId = Article.objects.all().aggregate(Max('articleId'))
     user = request.user
     all_articles = []
     all_articles_ids = []
-    wantedIds = []
+    wanted_ids = []
 
     try:
         if user.is_authenticated():
             today = datetime.datetime.utcnow()
-            fixed_date = datetime.datetime.strptime(str(today), '%Y-%m-%d %H:%M:%S.%f') - datetime.timedelta(days=2)
-            dbArticles = Article.objects.filter(timestamp__gte=fixed_date)
+            fixed_date = datetime.datetime.strptime(str(today), '%Y-%m-%d %H:%M:%S.%f')
+            fixed_date_final = fixed_date - datetime.timedelta(days=2)
+            db_articles = Article.objects.filter(timestamp__gte=fixed_date_final)
 
             filename = str(user) + '.csv'
-            fToWrite = open(filename, "wb")
-            writer = csv.writer(fToWrite, delimiter=';',
+            f_to_write = open(filename, "wb")
+            writer = csv.writer(f_to_write, delimiter=';',
                                 quotechar='"',
                                 quoting=csv.QUOTE_NONE,
                                 escapechar='\\')
             writer.writerow(['id', 'title'])
-            writer = csv.writer(fToWrite, delimiter=';',
+            writer = csv.writer(f_to_write, delimiter=';',
                                 quotechar='"',
                                 quoting=csv.QUOTE_NONNUMERIC,
                                 escapechar='\\')
-            for article in dbArticles:
+            for article in db_articles:
                 _id = article.articleId
                 _title = article.title
                 writer.writerow([_id, _title.encode('utf-8')])
-            fToWrite.close()
+            f_to_write.close()
 
-            if not user.cfEnabled:
-                fToWrite = open(filename, "rb")
-                row_count = sum(1 for row in fToWrite)
-                fToWrite.close()
+            user_objects = RateArticle.objects.filter(userId=user.id, rating__gte=1)
+            if len(user_objects) > 10:
+                user.ratingsEnabled = True
+            else:
+                user.ratingsEnabled = False
+
+            if (not user.ratingsEnabled) or (not user.preferencesEnabled):
+                f_to_write = open(filename, "rb")
+                row_count = sum(1 for row in f_to_write)
+                f_to_write.close()
 
                 for i in range(0, 5):
-                    wantedIds.append(randint(1, row_count - 1))
+                    wanted_ids.append(randint(1, row_count - 1))
 
             else:
                 nikolo_engine = NikoloEngine()
                 user_mongo_ids = nikolo_engine()
                 similar_vector = nikolo_engine.train(user_mongo_ids)
-                wantedIds = nikolo_engine.predict(similar_vector, user_mongo_ids, user_mongo_ids.index(user.id))
-                # print wantedIds
+                wanted_ids = nikolo_engine.predict(similar_vector,
+                                                   user_mongo_ids,
+                                                   user_mongo_ids.index(user.id))
 
             content_engine = ContentEngine()
-            ds = content_engine(filename)
-            rec_table = content_engine._train(ds)
+            dataset = content_engine(filename)
+            rec_table = content_engine._train(dataset)
 
-            for i in range(0, len(wantedIds)):
-                table_to_return = content_engine.predict(wantedIds[i], rec_table)
-                all_articles_ids.append(wantedIds[i])
+            for i in range(0, len(wanted_ids)):
+                table_to_return = content_engine.predict(wanted_ids[i], rec_table)
+                all_articles_ids.append(wanted_ids[i])
                 for recommended_article in table_to_return:
                     all_articles_ids.append(recommended_article)
 
@@ -87,21 +90,11 @@ def index(request):
     return render(request, 'newsfeed/index.html', context)
 
 
-def single_article(request, article_id):
-    user = request.user
-    if user.is_authenticated():
-        article = Article.objects.get(id=article_id)
-        user = request.user
-        context = {'article': article, 'user': user}
-        return render(request, 'newsfeed/single_article.html', context)
-    else:
-        return HttpResponseRedirect('/newsfeed')
-
-
 def register(request):
+    """ Handles the registration of the user """
     if request.method == 'POST':
         form = RegistrationForm(request.POST)
-        # form = UserCreationForm(request.POST)
+
         if form.is_valid():
             form.save()
             username = form.cleaned_data.get('username')
@@ -113,79 +106,62 @@ def register(request):
             args = {'form': form}
             return render(request, 'newsfeed/reg_form.html', args)
     else:
-        # form = UserCreationForm()
         form = RegistrationForm()
         args = {'form': form}
     return render(request, 'newsfeed/reg_form.html', args)
 
 
 def logout_view(request):
+    """ Handles the logout of the user """
     logout(request)
     return redirect('/newsfeed')
 
 
 def profile(request):
+    """ Display user profile page """
     user = request.user
     context = {'user': user}
     return render(request, 'newsfeed/profile.html', context)
 
 
 def pref_change(request):
+    """ Called if user save his new preferences - Stores new prefs in db """
     if request.method == 'POST':
-        worldPoints = request.POST.get('worldPoints')
-        businessPoints = request.POST.get('businessPoints')
-        technologyPoints = request.POST.get('technologyPoints')
-        sciencePoints = request.POST.get('sciencePoints')
-        healthPoints = request.POST.get('healthPoints')
-        sportsPoints = request.POST.get('sportsPoints')
-        politicsPoints = request.POST.get('politicsPoints')
+        world_points = request.POST.get('worldPoints')
+        business_points = request.POST.get('businessPoints')
+        technology_points = request.POST.get('technologyPoints')
+        science_points = request.POST.get('sciencePoints')
+        health_points = request.POST.get('healthPoints')
+        sports_points = request.POST.get('sportsPoints')
+        politics_points = request.POST.get('politicsPoints')
 
         user = request.user
-        user.worldPref = worldPoints
-        user.businessPref = businessPoints
-        user.technologyPref = technologyPoints
-        user.sciencePref = sciencePoints
-        user.healthPref = healthPoints
-        user.sportsPref = sportsPoints
-        user.politicsPref = politicsPoints
+        user.worldPref = world_points
+        user.businessPref = business_points
+        user.technologyPref = technology_points
+        user.sciencePref = science_points
+        user.healthPref = health_points
+        user.sportsPref = sports_points
+        user.politicsPref = politics_points
 
-        user_objects = RateArticle.objects.filter(userId=user.id, rating__gte=1)
-        if len(user_objects) > 5:
-            user.cfEnabled = True
-        else:
-            user.cfEnabled = False
+        user.preferencesEnabled = True
         user.save()
 
     return redirect('/newsfeed')
 
 
 def save_ratings(request):
+    """ Stores in db the ratings of users for the articles """
     print 'In save settings'
-    queryCheck = 0
+    query_check = 0
     if request.is_ajax():
-        requestId = request.POST.get('id')
-        requestValue = request.POST.get('value')
+        request_id = request.POST.get('id')
+        request_value = request.POST.get('value')
         user = request.user
-        # print 'id:' + requestId + ' value:' + requestValue
-        # print 'user id:' + user.id
-        queryCheck = RateArticle.objects.filter(userId=user.id, articleId=requestId).update(rating=requestValue)
-        # print str(queryCheck)
 
-        # for query in queryset:
-        #     queryCheck = query.userId
-        if queryCheck == 0:
-            tempRate = RateArticle(articleId=requestId, userId=user.id, rating=requestValue)
-            tempRate.save()
+        query_check = RateArticle.objects.filter(userId=user.id,
+                                                 articleId=request_id).update(rating=request_value)
 
-
-def add_rss(request):
-    if request.method == 'POST':
-        rssToAdd = request.POST.get('rss')
-
-        user = request.user
-        rssList = user.rss
-        rssList.append(rssToAdd)
-        user.rss = rssList
-        user.save()
-
-    return redirect('/newsfeed')
+        if query_check == 0:
+            temp_rate = RateArticle(articleId=request_id, userId=user.id, rating=request_value)
+            temp_rate.save()

@@ -5,7 +5,19 @@ from djangotoolbox.fields import ListField
 
 
 class RegistrationForm(UserCreationForm):
+    gender_choice = (
+        ('1', 'Male'),
+        ('2', 'Female')
+    )
+    age_choice = (
+        (1, '<18'),
+        (2, '18-25'),
+        (3, '26-45'),
+        (4, '>45')
+    )
     email = forms.EmailField(required=True)
+    gender = forms.ChoiceField(choices=gender_choice)
+    age_group = forms.ChoiceField(choices=age_choice)
 
     def __init__(self, *args, **kwargs):
         super(UserCreationForm, self).__init__(*args, **kwargs)
@@ -19,6 +31,8 @@ class RegistrationForm(UserCreationForm):
             'first_name',
             'last_name',
             'email',
+            'gender',
+            'age_group',
             'password1',
             'password2'
         )

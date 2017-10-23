@@ -1,20 +1,21 @@
 # -*- coding: utf-8 -*-
-from pymongo import MongoClient
+""" Script for updating the database """
 import feedparser
 import datetime
+from pymongo import MongoClient
 
 client = MongoClient()
 db = client.strello_db
 articles = db.newsfeed_article
 
 try:
-    lastArticles = articles.find({}).sort("_id", -1).limit(1)
-    lastId = 0
-    for doc in lastArticles:
-        lastId = doc['articleId']
-    postId = lastId + 1
+    last_articles = articles.find({}).sort("_id", -1).limit(1)
+    last_id = 0
+    for doc in last_articles:
+        last_id = doc['articleId']
+    post_id = last_id + 1
 
-    rssList = ['http://feeds.bbci.co.uk/news/world/rss.xml']
+    rss_list = ['http://feeds.bbci.co.uk/news/world/rss.xml']
                # 'http://feeds.bbci.co.uk/news/business/rss.xml',
                # 'http://feeds.bbci.co.uk/news/politics/rss.xml',
                # 'http://feeds.bbci.co.uk/news/health/rss.xml',
@@ -36,9 +37,9 @@ try:
     # rssList = ['http://feeds.reuters.com/reuters/businessNews']
     # rssList = ['https://www.newsinlevels.com/feed/']
     # rssList = ['']
-    for rssUrl in rssList:
-        rssToParse = feedparser.parse(rssUrl)
-        for post in rssToParse.entries:
+    for rss_url in rss_list:
+        rss_to_parse = feedparser.parse(rss_url)
+        for post in rss_to_parse.entries:
             _title = post.title
             _description = post.description
             _link = post.link
@@ -53,11 +54,11 @@ try:
             except:
                 pass
 
-            existingLink = articles.find_one({"link": _link})
-            if existingLink is None:
+            existing_link = articles.find_one({"link": _link})
+            if existing_link is None:
                 result = articles.insert_one(
                     {
-                        "articleId": postId,
+                        "articleId": post_id,
                         "title": _title,
                         "description": _description,
                         "link": _link,
@@ -65,7 +66,7 @@ try:
                         "timestamp": datetime.datetime.utcnow()
                     }
                 )
-                postId += 1
+                post_id += 1
 
 except Exception as ex:
     print ex

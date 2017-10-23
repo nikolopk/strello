@@ -3,7 +3,9 @@
 import csv
 import datetime
 import os
+import json
 from random import randint
+from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth import logout
 from django.core.cache import cache
@@ -13,7 +15,6 @@ from newsfeed.models import RateArticle
 from newsfeed.forms import RegistrationForm
 from newsfeed.ContentEngine import ContentEngine
 from newsfeed.NikoloEngine import NikoloEngine
-
 
 def index(request):
     """ Initial method, responsible for serving to users articles"""
@@ -71,10 +72,10 @@ def index(request):
 
             content_engine = ContentEngine()
             dataset = content_engine(filename)
-            rec_table = content_engine._train(dataset)
+            rec_table = ContentEngine._train(dataset)
 
             for i in range(0, len(wanted_ids)):
-                table_to_return = content_engine.predict(wanted_ids[i], rec_table)
+                table_to_return = ContentEngine.predict(wanted_ids[i], rec_table)
                 all_articles_ids.append(wanted_ids[i])
                 for recommended_article in table_to_return:
                     all_articles_ids.append(recommended_article)
@@ -157,11 +158,19 @@ def save_ratings(request):
     if request.is_ajax():
         request_id = request.POST.get('id')
         request_value = request.POST.get('value')
+
         user = request.user
+        if user.ratingsEnabled and user.preferencesEnabled:
+            rating_mode = 'NikoloEngine'
+        else:
+            rating_mode = 'ContentEngine'
 
         query_check = RateArticle.objects.filter(userId=user.id,
-                                                 articleId=request_id).update(rating=request_value)
+                                                 articleId=request_id).update(rating=request_value,
+                                                                              ratingMode=rating_mode)
 
         if query_check == 0:
-            temp_rate = RateArticle(articleId=request_id, userId=user.id, rating=request_value)
+            temp_rate = RateArticle(articleId=request_id, userId=user.id, rating=request_value, ratingMode=rating_mode)
             temp_rate.save()
+    response_dict = {'success': 'true'}
+    return HttpResponse(json.dumps(response_dict), mimetype="application/json")

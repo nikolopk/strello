@@ -13,8 +13,8 @@ class Article(models.Model):
     articleId = models.IntegerField()
     title = models.CharField(max_length=250)
     description = models.TextField()
-    link = models.CharField(max_length=2000)
-    thumbnail = models.CharField(max_length=2000)
+    link = models.TextField()
+    thumbnail = models.TextField()
     timestamp = models.DateTimeField()
 
 
@@ -23,6 +23,7 @@ class RateArticle(models.Model):
     articleId = models.IntegerField()
     userId = models.CharField(max_length=100)
     rating = models.IntegerField()
+    ratingMode = models.CharField(max_length=15)
 
 
 class UserProfile(AbstractBaseUser):
@@ -35,6 +36,8 @@ class UserProfile(AbstractBaseUser):
         max_length=255,
         unique=True,
     )
+    gender = models.IntegerField()
+    age_group = models.IntegerField()
     worldPref = models.PositiveSmallIntegerField(default=2)
     businessPref = models.PositiveSmallIntegerField(default=2)
     technologyPref = models.PositiveSmallIntegerField(default=2)
@@ -44,7 +47,6 @@ class UserProfile(AbstractBaseUser):
     politicsPref = models.PositiveSmallIntegerField(default=2)
     preferencesEnabled = models.BooleanField(default=False)
     ratingsEnabled = models.BooleanField(default=False)
-    # nikoloEnabled = models.BooleanField(default=False)
     date_joined = models.DateTimeField(auto_now_add=True, blank=True)
 
     USERNAME_FIELD = 'username'

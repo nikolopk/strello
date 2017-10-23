@@ -140,6 +140,7 @@ $(document).ready( function() {
         $.ajax({
             url: "/newsfeed/saveRatings/",
             type: "post",
+            dataType: "json",
             data: {'id': articleId, 'value': value},
             beforeSend: function(xhr, settings) {
                 if (!csrfSafeMethod(settings.type)) {
@@ -147,11 +148,16 @@ $(document).ready( function() {
                 }
             },
             success: function(data) {
-
+                var element = "rateP" + articleId;
+                alert(element);
+                $
+                document.getElementById("#element").innerHTML = "Rated!";
+                document.getElementById("element").style.color = "#2aaf5a";
             }
         })
     });
 });
+
 
 
 
@@ -163,21 +169,18 @@ $(document).ready( function() {
     <table class="table">
         <tbody>
         <tr>
-            <!--<td><img src="{% static 'newsfeed/images/australia.jpg' %}" class="img-rounded" width="204" height="136">-->
-            <!--</td>-->
             <td><img src="{{ post.thumbnail }}" class="img-rounded" width="204" height="136"></td>
             <td><p>{{ post.description }}</p>
-                <p style="color:red;">Rate the article</p>
+                <p style="color:red;" id="rateP{{ post.articleId }}">Rate the article</p>
                 <input type="range" id="{{ post.articleId }}" min="0" max="2" value="1">
 
             </td>
-            <!--<td><p>{{ post.text|safe|truncatewords:"100"|linebreaks }}</p>-->
-            <!--<a href="/newsfeed/{{ post|mongo_id }}">Read more</a>-->
         </tr>
         <tr>
             <td>
                 <!--<a target="_blank" href="{{ post.link }}">Read more</a>-->
-                <button class="w3-button w3-round-xxlarge w3-green" name="{{ post.articleId }}" id="rateButton">Rate</button>
+                <button class="w3-button w3-round-xxlarge w3-green" name="{{ post.articleId }}" id="rateButton">Rate
+                </button>
             </td>
         </tr>
         </tbody>
@@ -210,11 +213,11 @@ $(document).ready( function() {
 <!--{% block ratingButton %}-->
 <!--{% if user.is_authenticated %}-->
 <!--<div>-->
-    <!--<form action="/newsfeed/saveRatings/" method="post">-->
-        <!--{% csrf_token %}-->
-        <!--<button type="submit" value="Submit" class="w3-button w3-round-xxlarge w3-green">Rate Articles</button>-->
-    <!--</form>-->
-    <!--<br>-->
+<!--<form action="/newsfeed/saveRatings/" method="post">-->
+<!--{% csrf_token %}-->
+<!--<button type="submit" value="Submit" class="w3-button w3-round-xxlarge w3-green">Rate Articles</button>-->
+<!--</form>-->
+<!--<br>-->
 <!--</div>-->
 <!--{% endif %}-->
 <!--{% endblock %}-->

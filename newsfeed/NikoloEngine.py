@@ -10,10 +10,11 @@ class NikoloEngine(object):
     """ Class for Nikolo filtering """
     def __call__(self):
         """ Constructor """
-        user_mongo_ids = self.user_vectorize()
+        user_mongo_ids = NikoloEngine.user_vectorize()
         return user_mongo_ids
 
-    def user_vectorize(self):
+    @staticmethod
+    def user_vectorize():
         """ Build users preferences vectors """
         user_mongo_ids = []
         try:
@@ -22,11 +23,13 @@ class NikoloEngine(object):
                 if (not row_user.ratingsEnabled) or (not row_user.preferencesEnabled):
                     continue
                 user_mongo_ids.append(row_user.id)
-        except:
+        except Exception as ex:
+            print ex
             pass
         return user_mongo_ids
 
-    def train(self, user_mongo_ids):
+    @staticmethod
+    def train(user_mongo_ids):
         """ Build similar vector """
         preferences_matrix = []
         user_vector = []
@@ -70,7 +73,8 @@ class NikoloEngine(object):
             pass
         return similar_vector
 
-    def predict(self, similar_vector, user_mongo_ids, user_index):
+    @staticmethod
+    def predict(similar_vector, user_mongo_ids, user_index):
         """ Recommend articles for the user. Returns only the article's id. """
         user_a_mongo_id = user_mongo_ids[user_index]
         user_a_objects = RateArticle.objects.filter(userId=user_a_mongo_id)

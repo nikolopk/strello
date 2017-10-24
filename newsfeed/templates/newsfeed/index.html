@@ -60,31 +60,7 @@
     </form>
 
     <br>
-    <!--<div>-->
-    <!--<form action="" method="post">-->
-    <!--{% csrf_token %}-->
-    <!--<button type="submit" value="Submit" class="w3-button w3-round-xxlarge w3-green">Rate Articles</button>-->
-    <!--</form>-->
-    <!--<br>-->
-    <!--</div>-->
-    <!--<br><br>-->
-    <!--<div>-->
-    <!--<form action="/newsfeed/addRss/" method="post">-->
-    <!--{% csrf_token %}-->
-    <!--<table class="table">-->
-    <!--<tbody>-->
-    <!--<tr>-->
-    <!--<td style="color:white;">Add RSS</td>-->
-    <!--</tr>-->
-    <!--<tr>-->
-    <!--<td><input type="text" placeholder="RSS url" name="rss" style="width:100%;"></td>-->
-    <!--</tr>-->
-    <!--</tbody>-->
-    <!--</table>-->
-    <!--<button type="submit" value="Submit" class="w3-button w3-round-xlarge w3-red">Save</button>-->
-    <!--</form>-->
-    <!--<br>-->
-    <!--</div>-->
+    <input type="text" style="display:none;" id="engineInUse" value="{{ engine_in_use }}"/>
 </div>
 {% else %}
 <div class="col-sm-2">
@@ -135,13 +111,18 @@ $(document).ready( function() {
 
         var articleId = $(this).attr('name');
         var value = $("#"+articleId).val();
+        var engineInUse = "NikoloEngine";
+        if ($("#engineInUse").val()){
+            engineInUse = "ContentEngine";
+        }
+        alert(engineInUse);
         csrfToken = getCookie('csrftoken')
 
         $.ajax({
             url: "/newsfeed/saveRatings/",
             type: "post",
             dataType: "json",
-            data: {'id': articleId, 'value': value},
+            data: {'id': articleId, 'value': value, 'engine_in_use': engineInUse},
             beforeSend: function(xhr, settings) {
                 if (!csrfSafeMethod(settings.type)) {
                     xhr.setRequestHeader("X-CSRFToken", csrfToken);
@@ -149,10 +130,8 @@ $(document).ready( function() {
             },
             success: function(data) {
                 var element = "rateP" + articleId;
-                alert(element);
-                $
-                document.getElementById("#element").innerHTML = "Rated!";
-                document.getElementById("element").style.color = "#2aaf5a";
+                $("#"+element).text("Rated!");
+                $("#"+element).css('color', '#2aaf5a');
             }
         })
     });
@@ -171,14 +150,13 @@ $(document).ready( function() {
         <tr>
             <td><img src="{{ post.thumbnail }}" class="img-rounded" width="204" height="136"></td>
             <td><p>{{ post.description }}</p>
-                <p style="color:red;" id="rateP{{ post.articleId }}">Rate the article</p>
+                <p style="color:red;" id="rateP{{ post.articleId }}">Rate the article {{ post.articleId }}</p>
                 <input type="range" id="{{ post.articleId }}" min="0" max="2" value="1">
 
             </td>
         </tr>
         <tr>
             <td>
-                <!--<a target="_blank" href="{{ post.link }}">Read more</a>-->
                 <button class="w3-button w3-round-xxlarge w3-green" name="{{ post.articleId }}" id="rateButton">Rate
                 </button>
             </td>
@@ -210,15 +188,4 @@ $(document).ready( function() {
 {% endif %}
 {% endblock %}
 
-<!--{% block ratingButton %}-->
-<!--{% if user.is_authenticated %}-->
-<!--<div>-->
-<!--<form action="/newsfeed/saveRatings/" method="post">-->
-<!--{% csrf_token %}-->
-<!--<button type="submit" value="Submit" class="w3-button w3-round-xxlarge w3-green">Rate Articles</button>-->
-<!--</form>-->
-<!--<br>-->
-<!--</div>-->
-<!--{% endif %}-->
-<!--{% endblock %}-->
 

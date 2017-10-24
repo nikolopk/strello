@@ -16,6 +16,7 @@ from newsfeed.forms import RegistrationForm
 from newsfeed.ContentEngine import ContentEngine
 from newsfeed.NikoloEngine import NikoloEngine
 
+
 def index(request):
     """ Initial method, responsible for serving to users articles"""
     cache.clear()
@@ -23,6 +24,7 @@ def index(request):
     all_articles = []
     all_articles_ids = []
     wanted_ids = []
+    force_content_based = True
 
     try:
         if user.is_authenticated():
@@ -49,26 +51,31 @@ def index(request):
             f_to_write.close()
 
             user_objects = RateArticle.objects.filter(userId=user.id, rating__gte=1)
-            if len(user_objects) > 10:
+            if len(user_objects) >= 10:
                 user.ratingsEnabled = True
             else:
                 user.ratingsEnabled = False
+            user.save()
 
-            if (not user.ratingsEnabled) or (not user.preferencesEnabled):
+            if user.ratingsEnabled and user.preferencesEnabled:
+                nikolo_engine = NikoloEngine()
+                user_mongo_ids = nikolo_engine()
+                similar_vector = NikoloEngine.train(user_mongo_ids)
+                wanted_ids = NikoloEngine.predict(similar_vector,
+                                                   user_mongo_ids,
+                                                   user_mongo_ids.index(user.id))
+                if not wanted_ids:
+                    force_content_based = True
+                else:
+                    force_content_based = False
+
+            if (not user.ratingsEnabled) or (not user.preferencesEnabled) or force_content_based:
                 f_to_write = open(filename, "rb")
                 row_count = sum(1 for row in f_to_write)
                 f_to_write.close()
 
                 for i in range(0, 5):
                     wanted_ids.append(randint(1, row_count - 1))
-
-            else:
-                nikolo_engine = NikoloEngine()
-                user_mongo_ids = nikolo_engine()
-                similar_vector = nikolo_engine.train(user_mongo_ids)
-                wanted_ids = nikolo_engine.predict(similar_vector,
-                                                   user_mongo_ids,
-                                                   user_mongo_ids.index(user.id))
 
             content_engine = ContentEngine()
             dataset = content_engine(filename)
@@ -87,7 +94,7 @@ def index(request):
     except Exception as ex:
         print ex
         pass
-    context = {'all_articles': all_articles, 'user': user}
+    context = {'all_articles': all_articles, 'user': user, 'engine_in_use': force_content_based}
     return render(request, 'newsfeed/index.html', context)
 
 
@@ -158,13 +165,9 @@ def save_ratings(request):
     if request.is_ajax():
         request_id = request.POST.get('id')
         request_value = request.POST.get('value')
-
+        rating_mode = request.POST.get('engine_in_use')
+        print rating_mode
         user = request.user
-        if user.ratingsEnabled and user.preferencesEnabled:
-            rating_mode = 'NikoloEngine'
-        else:
-            rating_mode = 'ContentEngine'
-
         query_check = RateArticle.objects.filter(userId=user.id,
                                                  articleId=request_id).update(rating=request_value,
                                                                               ratingMode=rating_mode)

@@ -10,8 +10,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import logout
 from django.core.cache import cache
 from django.contrib.auth import login, authenticate
-from newsfeed.models import Article
-from newsfeed.models import RateArticle
+from newsfeed.models import Article, RateArticle, RssLinks
 from newsfeed.forms import RegistrationForm
 from newsfeed.ContentEngine import ContentEngine
 from newsfeed.NikoloEngine import NikoloEngine
@@ -177,3 +176,15 @@ def save_ratings(request):
             temp_rate.save()
     response_dict = {'success': 'true'}
     return HttpResponse(json.dumps(response_dict), mimetype="application/json")
+
+
+def add_rss(request):
+    """ Stores rss links provided from the user. """
+    if request.method == 'POST':
+        rss_to_add = request.POST.get('rss')
+
+        db_rss = RssLinks.objects.first()
+        db_rss.links.append(rss_to_add)
+        db_rss.save()
+
+    return redirect('/newsfeed')

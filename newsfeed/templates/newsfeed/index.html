@@ -59,7 +59,28 @@
         <button type="submit" value="Submit" class="w3-button w3-round-xlarge w3-red">Save</button>
     </form>
 
-    <br>
+    <br><br>
+
+    <div>
+        <form action="/newsfeed/addRss/" method="post">
+            {% csrf_token %}
+            <table class="table">
+                <tbody>
+                <tr>
+                    <td style="color:white;">Add RSS</td>
+                </tr>
+                <tr>
+                    <td>
+                        <input type="text" placeholder="RSS url" name="rss"
+                               style="width:100%; border: none; border:solid 1px #ccc; border-radius: 5px;">
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <button type="submit" value="Submit" class="w3-button w3-round-xlarge w3-red">Save</button>
+        </form>
+        <br>
+    </div>
     <input type="text" style="display:none;" id="engineInUse" value="{{ engine_in_use }}"/>
 </div>
 {% else %}
@@ -115,7 +136,6 @@ $(document).ready( function() {
         if ($("#engineInUse").val()){
             engineInUse = "ContentEngine";
         }
-        alert(engineInUse);
         csrfToken = getCookie('csrftoken')
 
         $.ajax({
@@ -136,6 +156,7 @@ $(document).ready( function() {
         })
     });
 });
+
 
 
 

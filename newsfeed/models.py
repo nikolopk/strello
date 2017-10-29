@@ -6,6 +6,7 @@ from __future__ import unicode_literals
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser
 from django.contrib.auth.models import UserManager
+from djangotoolbox.fields import ListField
 
 
 class Article(models.Model):
@@ -24,6 +25,11 @@ class RateArticle(models.Model):
     userId = models.CharField(max_length=100)
     rating = models.IntegerField()
     ratingMode = models.CharField(max_length=15)
+
+
+class RssLinks(models.Model):
+    """ Stores rss links. """
+    links = ListField(models.TextField(), default=[])
 
 
 class UserProfile(AbstractBaseUser):
@@ -48,6 +54,7 @@ class UserProfile(AbstractBaseUser):
     preferencesEnabled = models.BooleanField(default=False)
     ratingsEnabled = models.BooleanField(default=False)
     date_joined = models.DateTimeField(auto_now_add=True, blank=True)
+    rss = ListField(models.CharField(max_length=2000), default=[])
 
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = ['email']

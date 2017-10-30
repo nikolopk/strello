@@ -132,9 +132,13 @@ $(document).ready( function() {
 
         var articleId = $(this).attr('name');
         var value = $("#"+articleId).val();
-        var engineInUse = "NikoloEngine";
-        if ($("#engineInUse").val()){
+        var engineInUse = "";
+        var engineStatement = $("#engineInUse").val();
+        if (engineStatement == "True"){
             engineInUse = "ContentEngine";
+        }
+        else{
+            engineInUse = "NikoloEngine";
         }
         csrfToken = getCookie('csrftoken')
 

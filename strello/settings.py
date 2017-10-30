@@ -50,11 +50,11 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'rello.urls'
+ROOT_URLCONF = 'strello.urls'
 
 # template directory
 TEMPLATE_DIRS = (
-  '/users/Kotsarikos/rello/newsfeed/templates/',
+  '/users/Kotsarikos/strello/newsfeed/templates/',
 )
 
 TEMPLATES = [
@@ -73,7 +73,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'rello.wsgi.application'
+WSGI_APPLICATION = 'strello.wsgi.application'
 
 
 # Database
@@ -141,7 +141,7 @@ STATIC_ROOT = os.path.join(PROJECT_DIR, 'static')
 
 STATIC_URL = '/newsfeed/static/'
 
-STATIC_PATH = os.path.join('/users/kotsarikos/rello/', 'newsfeed/static')
+STATIC_PATH = os.path.join('/users/kotsarikos/strello/', 'newsfeed/static')
 
 STATICFILES_DIRS = (
     STATIC_PATH,

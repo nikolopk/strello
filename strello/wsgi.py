@@ -11,6 +11,6 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "rello.settings")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "strello.settings")
 
 application = get_wsgi_application()

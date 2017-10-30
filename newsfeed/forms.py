@@ -1,7 +1,6 @@
 from django import forms
 from newsfeed.models import UserProfile
 from django.contrib.auth.forms import UserCreationForm
-from djangotoolbox.fields import ListField
 
 
 class RegistrationForm(UserCreationForm):

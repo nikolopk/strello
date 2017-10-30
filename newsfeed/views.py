@@ -63,6 +63,7 @@ def index(request):
                 wanted_ids = NikoloEngine.predict(similar_vector,
                                                    user_mongo_ids,
                                                    user_mongo_ids.index(user.id))
+
                 if not wanted_ids:
                     force_content_based = True
                 else:
@@ -159,13 +160,12 @@ def pref_change(request):
 
 def save_ratings(request):
     """ Stores in db the ratings of users for the articles """
-    print 'In save settings'
     query_check = 0
     if request.is_ajax():
         request_id = request.POST.get('id')
         request_value = request.POST.get('value')
         rating_mode = request.POST.get('engine_in_use')
-        print rating_mode
+
         user = request.user
         query_check = RateArticle.objects.filter(userId=user.id,
                                                  articleId=request_id).update(rating=request_value,
